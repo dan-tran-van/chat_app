@@ -1,7 +1,7 @@
 volumes:
   chat_app_local_postgres_data: {}
   chat_app_local_postgres_data_backups: {}
-
+  redis_data: {}
 
 services:
   django:
@@ -12,6 +12,7 @@ services:
     container_name: chat_app_local_django
     depends_on:
       - postgres
+      - redis
     volumes:
       - /app/.venv
       - .:/app:z
@@ -33,3 +34,11 @@ services:
       - chat_app_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+
+  redis:
+    image: redis:latest
+    container_name: chat_app_local_redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data

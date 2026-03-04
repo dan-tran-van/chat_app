@@ -15,6 +15,8 @@ from pathlib import Path
 from channels import routing
 from django.core.asgi import get_asgi_application
 
+from chat_app.chats.middleware import TokenAuthMiddleware
+
 # This allows easy placement of apps within the interior
 # chat_app directory.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -28,23 +30,14 @@ django_application = get_asgi_application()
 
 # Import websocket application here, so apps from django_application are loaded first
 # from config.websocket import websocket_application
-from config import routing
+from config import routing  # noqa: E402, F811
 
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa isort:skip
 
 
-# async def application(scope, receive, send):
-#     if scope["type"] == "http":
-#         await django_application(scope, receive, send)
-#     elif scope["type"] == "websocket":
-#         await websocket_application(scope, receive, send)
-#     else:
-#         msg = f"Unknown scope type {scope['type']}"
-#         raise NotImplementedError(msg)
-
 application = ProtocolTypeRouter(
     {
         "http": django_application,
-        "websocket": URLRouter(routing.websocket_urlpatterns),
+        "websocket": TokenAuthMiddleware(URLRouter(routing.websocket_urlpatterns)),
     },
 )

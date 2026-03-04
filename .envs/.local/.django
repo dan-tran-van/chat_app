@@ -2,3 +2,7 @@
 # ------------------------------------------------------------------------------
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
+REDIS_HOST=redis
+REDIS_PORT=6379
+PYTHONUNBUFFERED=1
+
